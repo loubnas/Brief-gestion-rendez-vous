@@ -12,11 +12,8 @@
   <div class="mb-3 col-10 ms-5">
         <label  class="form-label">Horaire</label>
         <select class="form-select input"  v-model="Horaire">
-                <option></option>
-                <option value="8-10">8-10</option>
-                <option value="10-12">10-12</option>
-                <option value="14-16">14-16</option>
-                <option value="16-18">16-18</option>
+            <option></option>
+                <option v-for="Horaire in Horaires" :key="Horaire.value" :disabled="Horaire.etat">{{Horaire.value}}</option>
         </select>
   </div>
 
@@ -44,13 +41,54 @@ export default {
       DateConsult: "",
       Horaire :"",
       TypeConsult: "",
-      Reference:this.$route.params.reference
-      
-    
-    };
-  },
+      Reference:this.$route.params.reference,
+  
+    HorairesAPI:[],
+    Horaires:[
+      {
+        value:"8-10",
+        etat:false
+      },
+      {
+        value:"10-12",
+        etat:false
+      },
+        {
+        value:"14-16",
+        etat:false
+      },
+      {
+        value:"16-18",
+        etat:false
+      }
+    ],
+
+  }},
 
 methods:{
+
+  async getHoraire(DateCon){
+   await fetch("http://localhost/brief6/Rendezvous/selectHorai/"+DateCon)
+         .then(res => res.json())
+         .then(data => this.HorairesAPI = data)
+         .catch(err =>console.log(err.message))
+  },
+  
+   async filerD(){
+       for (let i = 0; i < this.Horaires.length; i++) {
+         this.Horaires[i].etat=false;
+          for (let j = 0; j < this.HorairesAPI.length; j++) {
+            if(this.Horaires[i].value == this.HorairesAPI[j].Horaire ){
+              console.log(this.Horaires[i].value);
+              this.Horaires[i].etat=true;
+              }        
+          }
+      }
+  },
+
+  
+
+
   //ajouter un rendez voous par reference:
   addrendezvous(){
 
@@ -79,6 +117,13 @@ methods:{
     },
         
   },
+  watch :{
+    DateConsult : async function(val){
+      await this.getHoraire(val);
+      // this.editClient.DateConsult=val;
+      this.filerD();        
+      }
+  }
 };
 
 </script>

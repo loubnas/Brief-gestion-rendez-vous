@@ -67,13 +67,24 @@ class Rendezvous
 
 //save update rendez-vous :
 
-   public function saveRendezvous($Id,$DateConsult,$TypeConsult,$Horaire,$Reference){
+   public function saveRendezvous($Id,$DateConsult,$TypeConsult,$Horaire){
       $con=new Connexion();
       $conn2=$con->con;    
-      $query=("UPDATE `rendezvous` SET `DateConsult`='".$DateConsult."',`TypeConsult`='".$TypeConsult."',`Horaire`='".$Horaire."',`Reference`='".$Reference."' WHERE Id=".$Id);
+      $query=("UPDATE `rendezvous` SET `DateConsult`='".$DateConsult."',`TypeConsult`='".$TypeConsult."',`Horaire`='".$Horaire."' WHERE Id=".$Id);
       $result = $conn2->prepare($query);
       $result->execute();
    }   
+
+// horaire reservé par date :
+public function selectHoraire($DateConsult){
+   $con=new Connexion();
+   $conn2=$con->con;
+   $query="SELECT `Horaire` FROM `rendezvous` WHERE DateConsult='$DateConsult'";
+   $result = $conn2->prepare($query);
+   $result->execute();
+    return $result->fetchAll(PDO::FETCH_ASSOC);
+ }
+
 
 
 
